@@ -1,0 +1,80 @@
+import os
+from dotenv import load_dotenv
+from langchain.prompts import PromptTemplate, ChatPromptTemplate
+from langchain_core.messages import AIMessage, HumanMessage
+from langchain_openai import ChatOpenAI
+load_dotenv()
+
+api_key = os.getenv('OPENAI_API')
+
+
+#Creating a basic prompt templtae
+
+template1 = "Tell me jokes about {topic}"
+prompt01 =  ChatPromptTemplate.from_template(template1)
+
+print(prompt01)
+
+prompt = prompt01.invoke({"topic" : "dolphins"})
+print("\n")
+print(prompt)
+
+
+llm = ChatOpenAI(
+    model = 'gpt-4o',
+    api_key=api_key
+)
+print("llm response: \n")
+response = llm.invoke(prompt)
+print(response.content)
+
+
+# Part - 2 Prompt with multiple Place holders
+
+template02 =''' You are a helpful AI Assiatnt.
+Human : Tell me an {Adjective} story about an {animal}.
+Assitant : '''
+
+prompt02 = ChatPromptTemplate.from_template(template02)
+
+
+prompt2 = prompt02.invoke({"Adjective" : "Good", "animal" : "Dog"})
+
+
+response2 = llm.invoke(prompt2)
+print("response 2 : \n ")
+print(response2.content)
+
+Template03 = '''
+System : You are professnial comdiean and you have tell jobs about {topic},
+Human : you have to tell {Joke_count} jokes 
+'''
+
+prompt03 = ChatPromptTemplate.from_template(Template03)
+
+prompt3 = prompt03.invoke({"topic" : "Poverty" , "Joke_count" : "3"})
+
+response03 = llm.invoke(prompt3)
+
+
+print("Jokes : \n")
+print(response03.content)
+
+
+
+#Using Message format  Prompt template 
+
+
+message = [
+    ("system" , "You are a story teller who tells shairies about {topic}"),
+    ("human", "Tell me {count} shairies")
+]
+
+prompt4 = ChatPromptTemplate.from_messages(message)
+
+prompt04 = prompt4.invoke({"topic" : "Women" , "count" : "3"})
+
+response4 = llm.invoke(prompt04)
+
+print("shairies \n")
+print(response4.content)
